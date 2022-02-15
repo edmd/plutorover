@@ -5,84 +5,21 @@ namespace PlutoRover.Logic
     public class Rover : IRover
     {
         private IPlanet _planet;
-        private int _batteryLife;
         private Coordinate _coordinate;
-        private Action[] _route;
 
-        public Action[] Route { get => _route; set => _route = value; }
         public Coordinate Coordinate { get => _coordinate; set => _coordinate = value; }
 
         // Deploy rover
-        public Rover(IPlanet planet, string commands)
+        public Rover(IPlanet planet)
         {
             _planet = planet;
-            _batteryLife = 100;
 
             _coordinate.Latitude = 0;
             _coordinate.Longitude = 0;
             _coordinate.Direction = Direction.N;
-
-            CalculateRoute(commands);
         }
 
-        public void CalculateRoute(string commands)
-        {
-            if (string.IsNullOrEmpty(commands))
-            {
-                _route = new Action[_batteryLife];
-
-                for (var action = 0; action < _batteryLife; action++)
-                {
-                    Random rnd = new Random();
-                    var move = rnd.Next((int)Action.L);
-
-                    if (Enum.IsDefined(typeof(Action), move))
-                    {
-                        _route[action] = (Action)move;
-                    }
-                }
-            } else
-            {
-                var moves = commands.Split(' ');
-                _route = new Action[moves.Length];
-
-                for (var action = 0; action < moves.Length; action++)
-                {
-                    if (Enum.IsDefined(typeof(Action), moves[action]))
-                    {
-                        _route[action] = (Action)Enum.Parse(typeof(Action), moves[action]);
-                    }
-                    //else
-                    //{
-                    //    throw new Exception("Unknown command encountered.");
-                    //}
-                }
-            }
-        }
-
-        public void ExecuteRoute()
-        {
-            for (var position = 0; position <= Route.Length - 1; position++)
-            {
-                switch(_route[position])
-                {
-                    case Action.F:
-                        Forward();
-                        break;
-                    case Action.L:
-                        Left();
-                        break;
-                    case Action.B:
-                        Back();
-                        break;
-                    case Action.R:
-                        Right();
-                        break;
-                }
-            }
-        }
-
-        public string Forward()
+        public string MoveForward()
         {
             var _previousLatitude = _coordinate.Latitude;
             var _previousLongitude = _coordinate.Longitude;
@@ -127,7 +64,7 @@ namespace PlutoRover.Logic
                     }
                     else
                     {
-                        _coordinate.Longitude = _planet.SurfaceArea.GetLength(1) - 1; ;
+                        _coordinate.Longitude = _planet.SurfaceArea.GetLength(1) - 1;
                     }
                     break;
             }
@@ -143,7 +80,7 @@ namespace PlutoRover.Logic
             return ToString();
         }
 
-        public string Back()
+        public string MoveBackward()
         {
             var _previousLatitude = _coordinate.Latitude;
             var _previousLongitude = _coordinate.Longitude;
@@ -198,13 +135,13 @@ namespace PlutoRover.Logic
             {
                 _coordinate.Longitude = _previousLongitude;
                 _coordinate.Latitude = _previousLatitude;
-                Console.WriteLine("Obstacle encountered. Move aborted.");
+                return "Obstacle encountered. Move aborted.";
             }
 
             return ToString();
         }
 
-        public string Left()
+        public string TurnLeft()
         {
             switch(_coordinate.Direction)
             {
@@ -225,7 +162,7 @@ namespace PlutoRover.Logic
             return ToString();
         }
 
-        public string Right()
+        public string TurnRight()
         {
             switch (_coordinate.Direction)
             {
@@ -246,16 +183,14 @@ namespace PlutoRover.Logic
             return ToString();
         }
 
-        public string FinalPosition()
+        public string CurrentPosition()
         {
-            return String.Format("{0} {1}, {2}", _coordinate.Direction.ToString(), _coordinate.Longitude, _coordinate.Latitude);
+            return this.ToString();
         }
 
         public override string ToString()
         {
-            Console.WriteLine("{0} {1}, {2}", _coordinate.Direction.ToString(), _coordinate.Longitude, _coordinate.Latitude);
-
-            return null;
+            return String.Format("{0} {1}, {2}", _coordinate.Direction.ToString(), _coordinate.Longitude, _coordinate.Latitude);
         }
     }
 }

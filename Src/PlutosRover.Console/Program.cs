@@ -2,6 +2,7 @@
 
 namespace PlutosRover.Console
 {
+    // http://gameprogrammingpatterns.com/command.html
     public class Program
     {
         static void Main(string[] args)
@@ -24,9 +25,13 @@ namespace PlutosRover.Console
             //    System.Console.WriteLine();
             //}
 
+            System.Console.WriteLine("Enter a space delimited chain of commands for the rover. e.g. Enter 'B R F F L F' or type a 'Space' to auto-generate a chain of commands");
+            var commandString = System.Console.ReadLine();
+
+            var commandHandler = new CommandHandler(commandString);
             var pluto = new Pluto(null);
-            var rover = new Rover(pluto, "");
-            rover.ExecuteRoute();
+            var rover = new Rover(pluto);
+            commandHandler.ProcessCommands(rover);
 
             System.Console.ReadLine();
         }

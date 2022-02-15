@@ -1,15 +1,14 @@
-﻿namespace PlutoRover.Logic
+﻿//using System.Collections.Generic;
+
+namespace PlutoRover.Logic
 {
     public interface IRover
     {
-        Action[] Route { get; set; }
-
-        string Back();
-        string Forward();
-        string Left();
-        string Right();
-        void CalculateRoute(string commands);
-        void ExecuteRoute();
-        string FinalPosition();
+        //List<Command> Route { get; set; } // This would be useful in undoing / redoing commands for a Rover
+        string MoveBackward();
+        string MoveForward();
+        string TurnLeft();
+        string TurnRight();
+        string CurrentPosition();
     }
 }
